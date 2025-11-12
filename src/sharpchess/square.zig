@@ -69,8 +69,8 @@ pub fn getFileMask(f: File) u64 {
 }
 
 pub fn getRankMask(r: Rank) u64 {
-    return RANK_1 <<  @intFromEnum(r);
+    return RANK_1 << (@as(u6, @intFromEnum(r)) * 8);
 }
-pub fn popCount(bb: u64) u6 {
+pub fn popCount(bb: u64) u7 {
     return @popCount(bb);
 }
