@@ -70,3 +70,14 @@ test "no overlapping pieces" {
         chessboard.getBlackKing() + chessboard.getWhiteKing();
     try testing.expectEqual(all_pieces_or, all_pieces_add);
 }
+test "init king queen on correct squares" {
+    const white_king_square: square.Square = .e1;
+    const black_king_square: square.Square = .e8;
+    const white_queen_square: square.Square = .d1;
+    const black_queen_square: square.Square = .d8;
+    const chessboard: Chessboard = .init();
+    try testing.expectEqual(square.squareToBitboard(white_king_square), chessboard.getWhiteKing());
+    try testing.expectEqual(square.squareToBitboard(black_king_square), chessboard.getBlackKing());
+    try testing.expectEqual(square.squareToBitboard(white_queen_square), chessboard.getWhiteQueens());
+    try testing.expectEqual(square.squareToBitboard(black_queen_square), chessboard.getBlackQueens());
+}
