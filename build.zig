@@ -22,7 +22,7 @@ pub fn build(b: *std.Build) void {
     // in this directory.
 
     const mod_sharpchess = b.addModule("sharpchess", .{
-        .root_source_file = b.path("src/sharpchess/chess.zig"),
+        .root_source_file = b.path("src/sharpchess/test.zig"),
         .target = target,
     });
 
