@@ -145,9 +145,12 @@ pub const Chessboard = struct {
     }
 };
 
-pub fn hello_from_chess() !void {
-    std.debug.print("Hello {s}\n", .{"chess"});
+pub fn printBoard(chessboard: Chessboard) void {
+    std.debug.print("Board state:\n", .{});
+    std.debug.print("Black pieces: 0x{x}\n", .{chessboard.getBlackAll()});
+    std.debug.print("White pieces: 0x{x}\n", .{chessboard.getWhiteAll()});
 }
+
 test "init occupied bitboard" {
     const chessboard: Chessboard = .init();
     try std.testing.expectEqual(
