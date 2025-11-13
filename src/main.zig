@@ -1,8 +1,8 @@
 const std = @import("std");
 const chess = @import("sharpchess/chess.zig");
-const board = @import("sharpchess/board.zig");
+const utilities = @import("sharpchess/utilities.zig");
 
 pub fn main() !void {
     const chessboard = chess.Chessboard.init();
-    try board.printBoard(chessboard);
+    try utilities.printBoard(chessboard);
 }
