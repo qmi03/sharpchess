@@ -77,7 +77,7 @@ pub fn getRankMask(r: Rank) u64 {
 }
 
 pub fn getSquare(r: Rank, f: File) Square {
-    return @enumFromInt(8 * @intFromEnum(r) + @intFromEnum(f));
+    return @enumFromInt(8 * @as(u64, @intFromEnum(r)) + @intFromEnum(f));
 }
 
 pub fn getFile(sq: Square) File {
