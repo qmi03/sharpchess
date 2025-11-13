@@ -31,19 +31,14 @@ pub const Square = enum {
   a7, b7, c7, d7, e7, f7, g7, h7,
   a8, b8, c8, d8, e8, f8, g8, h8
 };
+pub const Direction = enum(comptime_int) {
+    north_west = 7,     north = 8,    north_east = 9,
+    west = -1,                        east = 1,
+    south_west = -9,    south = -8,   south_east = -7,
+};
 // zig fmt: on
 pub const File = enum { a, b, c, d, e, f, g, h };
 pub const Rank = enum { _1, _2, _3, _4, _5, _6, _7, _8 };
-pub const Direction = enum(comptime_int) {
-    north = 8,
-    south = -8,
-    east = 1,
-    west = -1,
-    north_east = 9,
-    north_west = 7,
-    south_east = -7,
-    south_west = -9,
-};
 
 // zig fmt: on
 pub fn squareToBitboard(sq: Square) u64 {
