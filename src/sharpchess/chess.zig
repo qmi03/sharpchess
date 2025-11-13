@@ -12,8 +12,9 @@ const RANK_6 = 5;
 const RANK_7 = 6;
 const RANK_8 = 7;
 
-pub const Color = enum { black, white };
-pub const PieceType = enum {
+pub const PieceColor = enum { black, white };
+pub const PieceType = enum { pawn, knight, bishop, rook, queen, king };
+pub const Piece = enum {
     black_all,
     white_all,
     black_pawn,
@@ -80,74 +81,67 @@ pub const Chessboard = struct {
             .occupied_bb = occupied_bb,
         };
     }
-    pub fn getPieceBitBoard(chessboard: Chessboard, pt: PieceType) u64 {
+    pub fn getPieceBitBoard(chessboard: Chessboard, pt: Piece) u64 {
         return chessboard.pieces_bb[@intFromEnum(pt)];
     }
     pub fn getBlackAll(chessboard: Chessboard) u64 {
-        return chessboard.pieces_bb[@intFromEnum(PieceType.black_all)];
+        return chessboard.pieces_bb[@intFromEnum(Piece.black_all)];
     }
     pub fn getWhiteAll(chessboard: Chessboard) u64 {
-        return chessboard.pieces_bb[@intFromEnum(PieceType.white_all)];
+        return chessboard.pieces_bb[@intFromEnum(Piece.white_all)];
     }
     pub fn getBlackPawns(chessboard: Chessboard) u64 {
-        return chessboard.pieces_bb[@intFromEnum(PieceType.black_pawn)];
+        return chessboard.pieces_bb[@intFromEnum(Piece.black_pawn)];
     }
     pub fn getWhitePawns(chessboard: Chessboard) u64 {
-        return chessboard.pieces_bb[@intFromEnum(PieceType.white_pawn)];
+        return chessboard.pieces_bb[@intFromEnum(Piece.white_pawn)];
     }
     pub fn getBlackKnights(chessboard: Chessboard) u64 {
-        return chessboard.pieces_bb[@intFromEnum(PieceType.black_knight)];
+        return chessboard.pieces_bb[@intFromEnum(Piece.black_knight)];
     }
     pub fn getWhiteKnights(chessboard: Chessboard) u64 {
-        return chessboard.pieces_bb[@intFromEnum(PieceType.white_knight)];
+        return chessboard.pieces_bb[@intFromEnum(Piece.white_knight)];
     }
     pub fn getBlackBishops(chessboard: Chessboard) u64 {
-        return chessboard.pieces_bb[@intFromEnum(PieceType.black_bishop)];
+        return chessboard.pieces_bb[@intFromEnum(Piece.black_bishop)];
     }
     pub fn getWhiteBishops(chessboard: Chessboard) u64 {
-        return chessboard.pieces_bb[@intFromEnum(PieceType.white_bishop)];
+        return chessboard.pieces_bb[@intFromEnum(Piece.white_bishop)];
     }
     pub fn getBlackRooks(chessboard: Chessboard) u64 {
-        return chessboard.pieces_bb[@intFromEnum(PieceType.black_rook)];
+        return chessboard.pieces_bb[@intFromEnum(Piece.black_rook)];
     }
     pub fn getWhiteRooks(chessboard: Chessboard) u64 {
-        return chessboard.pieces_bb[@intFromEnum(PieceType.white_rook)];
+        return chessboard.pieces_bb[@intFromEnum(Piece.white_rook)];
     }
     pub fn getBlackQueens(chessboard: Chessboard) u64 {
-        return chessboard.pieces_bb[@intFromEnum(PieceType.black_queen)];
+        return chessboard.pieces_bb[@intFromEnum(Piece.black_queen)];
     }
     pub fn getWhiteQueens(chessboard: Chessboard) u64 {
-        return chessboard.pieces_bb[@intFromEnum(PieceType.white_queen)];
+        return chessboard.pieces_bb[@intFromEnum(Piece.white_queen)];
     }
     pub fn getBlackKing(chessboard: Chessboard) u64 {
-        return chessboard.pieces_bb[@intFromEnum(PieceType.black_king)];
+        return chessboard.pieces_bb[@intFromEnum(Piece.black_king)];
     }
     pub fn getWhiteKing(chessboard: Chessboard) u64 {
-        return chessboard.pieces_bb[@intFromEnum(PieceType.white_king)];
+        return chessboard.pieces_bb[@intFromEnum(Piece.white_king)];
     }
-    pub fn getPawns(chessboard: Chessboard, ColorType: Color) u64 {
-        return chessboard.pieces_bb[@intFromEnum(PieceType.black_pawn) + @intFromEnum(ColorType)];
+    pub fn getPawns(chessboard: Chessboard, ColorType: PieceColor) u64 {
+        return chessboard.pieces_bb[@intFromEnum(Piece.black_pawn) + @intFromEnum(ColorType)];
     }
-    pub fn getKnights(chessboard: Chessboard, ColorType: Color) u64 {
-        return chessboard.pieces_bb[@intFromEnum(PieceType.black_knight) + @intFromEnum(ColorType)];
+    pub fn getKnights(chessboard: Chessboard, ColorType: PieceColor) u64 {
+        return chessboard.pieces_bb[@intFromEnum(Piece.black_knight) + @intFromEnum(ColorType)];
     }
-    pub fn getBishops(chessboard: Chessboard, ColorType: Color) u64 {
-        return chessboard.pieces_bb[@intFromEnum(PieceType.black_bishop) + @intFromEnum(ColorType)];
+    pub fn getBishops(chessboard: Chessboard, ColorType: PieceColor) u64 {
+        return chessboard.pieces_bb[@intFromEnum(Piece.black_bishop) + @intFromEnum(ColorType)];
     }
-    pub fn getRooks(chessboard: Chessboard, ColorType: Color) u64 {
-        return chessboard.pieces_bb[@intFromEnum(PieceType.black_rook) + @intFromEnum(ColorType)];
+    pub fn getRooks(chessboard: Chessboard, ColorType: PieceColor) u64 {
+        return chessboard.pieces_bb[@intFromEnum(Piece.black_rook) + @intFromEnum(ColorType)];
     }
-    pub fn getQueens(chessboard: Chessboard, ColorType: Color) u64 {
-        return chessboard.pieces_bb[@intFromEnum(PieceType.black_queen) + @intFromEnum(ColorType)];
+    pub fn getQueens(chessboard: Chessboard, ColorType: PieceColor) u64 {
+        return chessboard.pieces_bb[@intFromEnum(Piece.black_queen) + @intFromEnum(ColorType)];
     }
-    pub fn getKing(chessboard: Chessboard, ColorType: Color) u64 {
-        return chessboard.pieces_bb[@intFromEnum(PieceType.black_king) + @intFromEnum(ColorType)];
+    pub fn getKing(chessboard: Chessboard, ColorType: PieceColor) u64 {
+        return chessboard.pieces_bb[@intFromEnum(Piece.black_king) + @intFromEnum(ColorType)];
     }
 };
-
-pub fn printBoard(chessboard: Chessboard) void {
-    std.debug.print("Board state:\n", .{});
-    std.debug.print("Black pieces: 0x{x}\n", .{chessboard.getBlackAll()});
-    std.debug.print("White pieces: 0x{x}\n", .{chessboard.getWhiteAll()});
-}
-
