@@ -1,6 +1,6 @@
 const Chessboard = @import("chess.zig").Chessboard;
 const testing = @import("std").testing;
-const square = @import("square.zig");
+const board = @import("board.zig");
 test "init occupied bitboard" {
     const chessboard: Chessboard = .init();
     try testing.expectEqual(
@@ -71,129 +71,129 @@ test "no overlapping pieces" {
     try testing.expectEqual(all_pieces_or, all_pieces_add);
 }
 test "init king queen on correct squares" {
-    const white_king_square: square.Square = .e1;
-    const black_king_square: square.Square = .e8;
-    const white_queen_square: square.Square = .d1;
-    const black_queen_square: square.Square = .d8;
+    const white_king_square: board.Square = .e1;
+    const black_king_square: board.Square = .e8;
+    const white_queen_square: board.Square = .d1;
+    const black_queen_square: board.Square = .d8;
     const chessboard: Chessboard = .init();
-    try testing.expectEqual(square.squareToBitboard(white_king_square), chessboard.getWhiteKing());
-    try testing.expectEqual(square.squareToBitboard(black_king_square), chessboard.getBlackKing());
-    try testing.expectEqual(square.squareToBitboard(white_queen_square), chessboard.getWhiteQueens());
-    try testing.expectEqual(square.squareToBitboard(black_queen_square), chessboard.getBlackQueens());
+    try testing.expectEqual(board.squareToBitboard(white_king_square), chessboard.getWhiteKing());
+    try testing.expectEqual(board.squareToBitboard(black_king_square), chessboard.getBlackKing());
+    try testing.expectEqual(board.squareToBitboard(white_queen_square), chessboard.getWhiteQueens());
+    try testing.expectEqual(board.squareToBitboard(black_queen_square), chessboard.getBlackQueens());
 }
 test "init rook knight pawn squares" {
-    const board = Chessboard.init();
+    const chessboard = Chessboard.init();
 
     // Test rooks on corners
-    try testing.expect(board.getWhiteRooks() == (square.squareToBitboard(.a1) | square.squareToBitboard(.h1)));
+    try testing.expect(chessboard.getWhiteRooks() == (board.squareToBitboard(.a1) | board.squareToBitboard(.h1)));
 
     // Test knights
-    try testing.expect(board.getWhiteKnights() == (square.squareToBitboard(.b1)) | square.squareToBitboard(.g1));
+    try testing.expect(chessboard.getWhiteKnights() == (board.squareToBitboard(.b1)) | board.squareToBitboard(.g1));
 
     // Test bishops
-    try testing.expect(board.getWhiteBishops() == (square.squareToBitboard(.c1)) | square.squareToBitboard(.f1));
+    try testing.expect(chessboard.getWhiteBishops() == (board.squareToBitboard(.c1)) | board.squareToBitboard(.f1));
 
     // Test pawns on correct rank
-    try testing.expectEqual(square.getRankMask(._2), board.getWhitePawns());
-    try testing.expectEqual(square.getRankMask(._7), board.getBlackPawns());
+    try testing.expectEqual(board.getRankMask(._2), chessboard.getWhitePawns());
+    try testing.expectEqual(board.getRankMask(._7), chessboard.getBlackPawns());
 }
 test "getFileMask" {
     // Test each file mask individually
-    try testing.expectEqual(square.FILE_A, square.getFileMask(.a));
-    try testing.expectEqual(0x0202020202020202, square.getFileMask(.b));
-    try testing.expectEqual(0x0404040404040404, square.getFileMask(.c));
-    try testing.expectEqual(0x0808080808080808, square.getFileMask(.d));
-    try testing.expectEqual(0x1010101010101010, square.getFileMask(.e));
-    try testing.expectEqual(0x2020202020202020, square.getFileMask(.f));
-    try testing.expectEqual(0x4040404040404040, square.getFileMask(.g));
-    try testing.expectEqual(square.FILE_H, square.getFileMask(.h));
+    try testing.expectEqual(board.FILE_A, board.getFileMask(.a));
+    try testing.expectEqual(0x0202020202020202, board.getFileMask(.b));
+    try testing.expectEqual(0x0404040404040404, board.getFileMask(.c));
+    try testing.expectEqual(0x0808080808080808, board.getFileMask(.d));
+    try testing.expectEqual(0x1010101010101010, board.getFileMask(.e));
+    try testing.expectEqual(0x2020202020202020, board.getFileMask(.f));
+    try testing.expectEqual(0x4040404040404040, board.getFileMask(.g));
+    try testing.expectEqual(board.FILE_H, board.getFileMask(.h));
 
     // Test that each file mask has exactly 8 bits set
-    try testing.expectEqual(8, square.popCount(square.getFileMask(.a)));
-    try testing.expectEqual(8, square.popCount(square.getFileMask(.d)));
-    try testing.expectEqual(8, square.popCount(square.getFileMask(.h)));
+    try testing.expectEqual(8, board.popCount(board.getFileMask(.a)));
+    try testing.expectEqual(8, board.popCount(board.getFileMask(.d)));
+    try testing.expectEqual(8, board.popCount(board.getFileMask(.h)));
 
     // Test that no files overlap
-    try testing.expectEqual(@as(u64, 0), square.getFileMask(.a) & square.getFileMask(.b));
-    try testing.expectEqual(@as(u64, 0), square.getFileMask(.d) & square.getFileMask(.e));
-    try testing.expectEqual(@as(u64, 0), square.getFileMask(.g) & square.getFileMask(.h));
+    try testing.expectEqual(@as(u64, 0), board.getFileMask(.a) & board.getFileMask(.b));
+    try testing.expectEqual(@as(u64, 0), board.getFileMask(.d) & board.getFileMask(.e));
+    try testing.expectEqual(@as(u64, 0), board.getFileMask(.g) & board.getFileMask(.h));
 
     // Test that all files together cover the entire board
-    const all_files = square.getFileMask(.a) | square.getFileMask(.b) | square.getFileMask(.c) |
-        square.getFileMask(.d) | square.getFileMask(.e) | square.getFileMask(.f) |
-        square.getFileMask(.g) | square.getFileMask(.h);
+    const all_files = board.getFileMask(.a) | board.getFileMask(.b) | board.getFileMask(.c) |
+        board.getFileMask(.d) | board.getFileMask(.e) | board.getFileMask(.f) |
+        board.getFileMask(.g) | board.getFileMask(.h);
     try testing.expectEqual(0xffffffffffffffff, all_files);
 }
 
 test "getRankMask" {
     // Test each rank mask individually
-    try testing.expectEqual(square.RANK_1, square.getRankMask(._1));
-    try testing.expectEqual(0x000000000000ff00, square.getRankMask(._2));
-    try testing.expectEqual(0x0000000000ff0000, square.getRankMask(._3));
-    try testing.expectEqual(0x00000000ff000000, square.getRankMask(._4));
-    try testing.expectEqual(0x000000ff00000000, square.getRankMask(._5));
-    try testing.expectEqual(0x0000ff0000000000, square.getRankMask(._6));
-    try testing.expectEqual(0x00ff000000000000, square.getRankMask(._7));
-    try testing.expectEqual(square.RANK_8, square.getRankMask(._8));
+    try testing.expectEqual(board.RANK_1, board.getRankMask(._1));
+    try testing.expectEqual(0x000000000000ff00, board.getRankMask(._2));
+    try testing.expectEqual(0x0000000000ff0000, board.getRankMask(._3));
+    try testing.expectEqual(0x00000000ff000000, board.getRankMask(._4));
+    try testing.expectEqual(0x000000ff00000000, board.getRankMask(._5));
+    try testing.expectEqual(0x0000ff0000000000, board.getRankMask(._6));
+    try testing.expectEqual(0x00ff000000000000, board.getRankMask(._7));
+    try testing.expectEqual(board.RANK_8, board.getRankMask(._8));
 
     // Test that each rank mask has exactly 8 bits set
-    try testing.expectEqual(8, square.popCount(square.getRankMask(._1)));
-    try testing.expectEqual(8, square.popCount(square.getRankMask(._4)));
-    try testing.expectEqual(8, square.popCount(square.getRankMask(._8)));
+    try testing.expectEqual(8, board.popCount(board.getRankMask(._1)));
+    try testing.expectEqual(8, board.popCount(board.getRankMask(._4)));
+    try testing.expectEqual(8, board.popCount(board.getRankMask(._8)));
 
     // Test that no ranks overlap
-    try testing.expectEqual(@as(u64, 0), square.getRankMask(._1) & square.getRankMask(._2));
-    try testing.expectEqual(@as(u64, 0), square.getRankMask(._4) & square.getRankMask(._5));
-    try testing.expectEqual(@as(u64, 0), square.getRankMask(._7) & square.getRankMask(._8));
+    try testing.expectEqual(@as(u64, 0), board.getRankMask(._1) & board.getRankMask(._2));
+    try testing.expectEqual(@as(u64, 0), board.getRankMask(._4) & board.getRankMask(._5));
+    try testing.expectEqual(@as(u64, 0), board.getRankMask(._7) & board.getRankMask(._8));
 
     // Test that all ranks together cover the entire board
-    const all_ranks = square.getRankMask(._1) | square.getRankMask(._2) | square.getRankMask(._3) |
-        square.getRankMask(._4) | square.getRankMask(._5) | square.getRankMask(._6) |
-        square.getRankMask(._7) | square.getRankMask(._8);
+    const all_ranks = board.getRankMask(._1) | board.getRankMask(._2) | board.getRankMask(._3) |
+        board.getRankMask(._4) | board.getRankMask(._5) | board.getRankMask(._6) |
+        board.getRankMask(._7) | board.getRankMask(._8);
     try testing.expectEqual(0xffffffffffffffff, all_ranks);
 }
 
 test "file and rank mask interaction" {
     // Test that file and rank intersect at exactly one square
-    const e_file = square.getFileMask(.e);
-    const rank_4 = square.getRankMask(._4);
+    const e_file = board.getFileMask(.e);
+    const rank_4 = board.getRankMask(._4);
     const e4_square = e_file & rank_4;
 
-    try testing.expectEqual(square.squareToBitboard(.e4), e4_square);
-    try testing.expectEqual(1, square.popCount(e4_square));
+    try testing.expectEqual(board.squareToBitboard(.e4), e4_square);
+    try testing.expectEqual(1, board.popCount(e4_square));
 
     // Test corner squares
-    try testing.expectEqual(square.squareToBitboard(.a1), square.getFileMask(.a) & square.getRankMask(._1));
-    try testing.expectEqual(square.squareToBitboard(.h8), square.getFileMask(.h) & square.getRankMask(._8));
+    try testing.expectEqual(board.squareToBitboard(.a1), board.getFileMask(.a) & board.getRankMask(._1));
+    try testing.expectEqual(board.squareToBitboard(.h8), board.getFileMask(.h) & board.getRankMask(._8));
 
     // Test that getFile and getRank work with masks
-    const d5 = square.Square.d5;
-    const d5_file_mask = square.getFileMask(square.getFile(d5));
-    const d5_rank_mask = square.getRankMask(square.getRank(d5));
+    const d5 = board.Square.d5;
+    const d5_file_mask = board.getFileMask(board.getFile(d5));
+    const d5_rank_mask = board.getRankMask(board.getRank(d5));
 
     // d5 should be on both its file and rank masks
-    try testing.expect((d5_file_mask & square.squareToBitboard(d5)) != 0);
-    try testing.expect((d5_rank_mask & square.squareToBitboard(d5)) != 0);
+    try testing.expect((d5_file_mask & board.squareToBitboard(d5)) != 0);
+    try testing.expect((d5_rank_mask & board.squareToBitboard(d5)) != 0);
 }
 
 test "mask edge cases" {
     // Test that masks work for pawns on starting squares
-    const white_pawn_rank = square.getRankMask(._2);
-    const black_pawn_rank = square.getRankMask(._7);
+    const white_pawn_rank = board.getRankMask(._2);
+    const black_pawn_rank = board.getRankMask(._7);
 
     // All white pawns should be on rank 2
-    try testing.expectEqual(8, square.popCount(white_pawn_rank));
+    try testing.expectEqual(8, board.popCount(white_pawn_rank));
     // All black pawns should be on rank 7
-    try testing.expectEqual(8, square.popCount(black_pawn_rank));
+    try testing.expectEqual(8, board.popCount(black_pawn_rank));
 
     // Test edge files (important for pawn attack wrapping prevention)
-    const a_file = square.getFileMask(.a);
-    const h_file = square.getFileMask(.h);
+    const a_file = board.getFileMask(.a);
+    const h_file = board.getFileMask(.h);
 
     // Verify NOT_A_FILE and NOT_H_FILE would work correctly
     const not_a_file = ~a_file;
     const not_h_file = ~h_file;
 
-    try testing.expectEqual(56, square.popCount(not_a_file));
-    try testing.expectEqual(56, square.popCount(not_h_file));
+    try testing.expectEqual(56, board.popCount(not_a_file));
+    try testing.expectEqual(56, board.popCount(not_h_file));
 }
