@@ -41,8 +41,39 @@ pub const File = enum { a, b, c, d, e, f, g, h };
 pub const Rank = enum { _1, _2, _3, _4, _5, _6, _7, _8 };
 
 // zig fmt: on
+pub const SQUARE_BB: [64]u64 = block: {
+    var arr: [64]u64 = undefined;
+    for (0..arr.len) |i| {
+        arr[i] = @as(u64, 1) << i;
+    }
+    break :block arr;
+};
 pub fn squareToBitboard(sq: Square) u64 {
-    return @as(u64, 1) << @intFromEnum(sq);
+    return SQUARE_BB[@intFromEnum(sq)];
+}
+
+pub const RANK_MASKS: [8]u64 = block: {
+    var arr: [8]u64 = undefined;
+    for (0..arr.len) |i| {
+        arr[i] = RANK_1 << (i * 8);
+    }
+    break :block arr;
+};
+
+pub const FILE_MASKS: [8]u64 = block: {
+    var arr: [8]u64 = undefined;
+    for (0..arr.len) |i| {
+        arr[i] = FILE_A << i;
+    }
+    break :block arr;
+};
+
+pub fn getFileMask(f: File) u64 {
+    return FILE_MASKS[@intFromEnum(f)];
+}
+
+pub fn getRankMask(r: Rank) u64 {
+    return RANK_MASKS[@intFromEnum(r)];
 }
 
 pub fn getSquare(r: Rank, f: File) Square {
@@ -59,13 +90,6 @@ pub fn getRank(sq: Square) Rank {
     return @enumFromInt(@intFromEnum(sq) >> 3);
 }
 
-pub fn getFileMask(f: File) u64 {
-    return FILE_A << @intFromEnum(f);
-}
-
-pub fn getRankMask(r: Rank) u64 {
-    return RANK_1 << (@as(u6, @intFromEnum(r)) * 8);
-}
 pub fn popCount(bb: u64) u7 {
     return @popCount(bb);
 }
