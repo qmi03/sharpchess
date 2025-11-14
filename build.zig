@@ -10,8 +10,8 @@ pub fn build(b: *std.Build) void {
     const target = b.standardTargetOptions(.{});
     const optimize = b.standardOptimizeOption(.{});
 
-    const mod_sharpchess = b.addModule("sharpchess", .{
-        .root_source_file = b.path("src/sharpchess/test.zig"),
+    const mod_engine = b.addModule("engine", .{
+        .root_source_file = b.path("src/engine/test.zig"),
         .target = target,
     });
     const rlz = @import("raylib_zig");
@@ -25,7 +25,7 @@ pub fn build(b: *std.Build) void {
     const raygui = raylib_dep.module("raygui"); // raygui module
     const raylib_artifact = raylib_dep.artifact("raylib"); // raylib C library
     const exe = b.addExecutable(.{
-        .name = "sharpchess",
+        .name = "engine",
         .root_module = b.createModule(.{
             .root_source_file = b.path("src/main.zig"),
             .target = target,
@@ -47,10 +47,10 @@ pub fn build(b: *std.Build) void {
     if (b.args) |args| {
         run_cmd.addArgs(args);
     }
-    const mod_test_sharpchess = b.addTest(.{
-        .root_module = mod_sharpchess,
+    const mod_test_engine = b.addTest(.{
+        .root_module = mod_engine,
     });
-    const run_mod_test_sharpchess = b.addRunArtifact(mod_test_sharpchess);
+    const run_mod_test_engine = b.addRunArtifact(mod_test_engine);
 
     const exe_tests = b.addTest(.{
         .root_module = exe.root_module,
@@ -60,5 +60,5 @@ pub fn build(b: *std.Build) void {
 
     const test_step = b.step("test", "Run tests");
     test_step.dependOn(&run_exe_tests.step);
-    test_step.dependOn(&run_mod_test_sharpchess.step);
+    test_step.dependOn(&run_mod_test_engine.step);
 }

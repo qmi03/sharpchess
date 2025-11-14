@@ -1,6 +1,6 @@
 const std = @import("std");
-const chess = @import("sharpchess/chess.zig");
-const utilities = @import("sharpchess/utilities.zig");
+const chess = @import("engine/chess.zig");
+const utilities = @import("engine/utilities.zig");
 const rl = @import("raylib");
 
 const screenWidth = 800;

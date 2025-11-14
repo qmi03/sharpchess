@@ -2,9 +2,6 @@ const chess = @import("chess.zig");
 const std = @import("std");
 const board = @import("board.zig");
 pub const SquareColor = enum(u1) { dark, light };
-pub fn getSquareColorFromCoordinates(r: board.Rank, f: board.File) SquareColor {
-    return @enumFromInt(@intFromEnum(r) ^ @intFromEnum(f) & 1);
-}
 pub fn getSquareColor(sq_index: usize) SquareColor {
     return @enumFromInt((sq_index ^ (sq_index >> 3)) & 1);
 }
