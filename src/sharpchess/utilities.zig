@@ -47,14 +47,9 @@ pub const BoardView = struct {
         var view: BoardView = undefined;
         for (0..64) |i| {
             const square_mask = board.SQUARE_BB[i];
-            const piece_index: ?u4 = block: {
-                for (2..14) |p| {
-                    if (cb.pieces_bb[p] & square_mask != 0) {
-                        break :block @intCast(p);
-                    }
-                }
-                break :block null;
-            };
+            const piece_index: ?u4 = for (2..14) |p| {
+                if (cb.pieces_bb[p] & square_mask != 0) break @intCast(p);
+            } else null;
             const bg: u32 = switch (getSquareColor(i)) {
                 .dark => pal.dark_square,
                 .light => pal.light_square,
