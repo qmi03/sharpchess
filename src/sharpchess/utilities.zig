@@ -8,8 +8,44 @@ pub const AnsiColorDef = struct {
     black_piece: []const u8 = "\x1b[30m",
     reset: []const u8 = "\x1b[0m",
 };
+pub const SquareColor = enum(u1) { dark, light };
+pub fn getSquareColorFromCoordinates(r: board.Rank, f: board.File) SquareColor {
+    return @enumFromInt(@intFromEnum(r) ^ @intFromEnum(f) & 1);
+}
+pub fn getSquareColor(sq: board.Square) SquareColor {
+    const i = @intFromEnum(sq);
+    return @enumFromInt((i ^ (i >> 3)) & 1);
+}
+pub const PrintBoardRepresentation = struct {
+    piece_type: [64]?chess.PieceType,
+    piece_color: [64]?chess.PieceColor,
+    square_color: [64]SquareColor,
+    pub fn init(cb: chess.Chessboard) PrintBoardRepresentation {
+        var self: PrintBoardRepresentation = undefined;
+        for (0..64) |i| {
+            const square_mask: u64 = board.SQUARE_BB[i];
+            const piece_index: u4 = block: {
+                for (2..14) |p| {
+                    if (cb.pieces_bb[p] & square_mask != 0) {
+                        break :block @intCast(p);
+                    }
+                }
+                break :block 0;
+            };
+            if (piece_index == 0) {
+                self.piece_color[i] = null;
+                self.piece_type[i] = null;
+            } else {
+                self.piece_color[i] = @enumFromInt(piece_index % 2);
+                self.piece_type[i] = @enumFromInt(piece_index / 2 - 1);
+            }
+            self.square_color[i] = getSquareColor(@enumFromInt(i));
+        }
+        return self;
+    }
+};
 
-const PieceChar: [6]u21 = .{
+const Unicode: [6]u21 = .{
     '♟',
     '♞',
     '♝',
@@ -23,105 +59,30 @@ pub const SquareAnsiRep = struct {
     piece: u21,
 };
 
-pub const SquareColor = enum(u1) { dark, light };
-pub fn getSquareColorFromCoordinates(r: board.Rank, f: board.File) SquareColor {
-    return @enumFromInt(@intFromEnum(r) ^ @intFromEnum(f) & 1);
-}
-pub fn getSquareColor(sq: board.Square) SquareColor {
-    const i = @intFromEnum(sq);
-    return @enumFromInt((i ^ (i >> 3)) & 1);
-}
-pub fn getSquareStringRep(chessboard: chess.Chessboard, sq: board.Square, acd: AnsiColorDef) SquareAnsiRep {
-    const square_mask = board.SQUARE_BB[@intFromEnum(sq)];
-    const square_color = switch (getSquareColor(sq)) {
-        .dark => acd.dark_square,
-        .light => acd.light_square,
-    };
-    var piece: u21 = undefined;
-    var piece_color: []const u8 = undefined;
-    if ((chessboard.getBlackPawns() & square_mask) != 0) {
-        piece = PieceChar[0];
-        piece_color = acd.black_piece;
-        return .{ .piece = piece, .piece_color = piece_color, .square_color = square_color };
-    }
-    if ((chessboard.getWhitePawns() & square_mask) != 0) {
-        piece = PieceChar[0];
-        piece_color = acd.white_piece;
-        return .{ .piece = piece, .piece_color = piece_color, .square_color = square_color };
-    }
-
-    if ((chessboard.getBlackKnights() & square_mask) != 0) {
-        piece = PieceChar[1];
-        piece_color = acd.black_piece;
-        return .{ .piece = piece, .piece_color = piece_color, .square_color = square_color };
-    }
-    if ((chessboard.getWhiteKnights() & square_mask) != 0) {
-        piece = PieceChar[1];
-        piece_color = acd.white_piece;
-        return .{ .piece = piece, .piece_color = piece_color, .square_color = square_color };
-    }
-    if ((chessboard.getBlackBishops() & square_mask) != 0) {
-        piece = PieceChar[2];
-        piece_color = acd.black_piece;
-        return .{ .piece = piece, .piece_color = piece_color, .square_color = square_color };
-    }
-    if ((chessboard.getWhiteBishops() & square_mask) != 0) {
-        piece = PieceChar[2];
-        piece_color = acd.white_piece;
-        return .{ .piece = piece, .piece_color = piece_color, .square_color = square_color };
-    }
-    if ((chessboard.getBlackRooks() & square_mask) != 0) {
-        piece = PieceChar[3];
-        piece_color = acd.black_piece;
-        return .{ .piece = piece, .piece_color = piece_color, .square_color = square_color };
-    }
-    if ((chessboard.getWhiteRooks() & square_mask) != 0) {
-        piece = PieceChar[3];
-        piece_color = acd.white_piece;
-        return .{ .piece = piece, .piece_color = piece_color, .square_color = square_color };
-    }
-    if ((chessboard.getBlackQueens() & square_mask) != 0) {
-        piece = PieceChar[4];
-        piece_color = acd.black_piece;
-        return .{ .piece = piece, .piece_color = piece_color, .square_color = square_color };
-    }
-    if ((chessboard.getWhiteQueens() & square_mask) != 0) {
-        piece = PieceChar[4];
-        piece_color = acd.white_piece;
-        return .{ .piece = piece, .piece_color = piece_color, .square_color = square_color };
-    }
-    if ((chessboard.getBlackKing() & square_mask) != 0) {
-        piece = PieceChar[5];
-        piece_color = acd.black_piece;
-        return .{ .piece = piece, .piece_color = piece_color, .square_color = square_color };
-    }
-    if ((chessboard.getWhiteKing() & square_mask) != 0) {
-        piece = PieceChar[5];
-        piece_color = acd.white_piece;
-        return .{ .piece = piece, .piece_color = piece_color, .square_color = square_color };
-    }
-    piece = ' ';
-    piece_color = square_color;
-    return .{ .piece = piece, .piece_color = piece_color, .square_color = square_color };
-}
-
 pub fn printBoard(chessboard: chess.Chessboard) !void {
     std.debug.print("\n", .{});
     const color_def: AnsiColorDef = .{};
-    var rank: u3 = 7;
-    while (true) : (rank -%= 1) {
-        std.debug.print(" {d}| ", .{@as(u4, rank) + 1});
-        var file: u3 = 0;
-        while (true) : (file += 1) {
-            const square_ansi_rep = getSquareStringRep(chessboard, board.getSquare(@enumFromInt(rank), @enumFromInt(file)), color_def);
-            std.debug.print("{s}{s}{u} {s}", .{ square_ansi_rep.piece_color, square_ansi_rep.square_color, square_ansi_rep.piece, color_def.reset });
-            if (file == 7) break;
+    const colored_board: PrintBoardRepresentation = .init(chessboard);
+
+    for (0..8) |ri| {
+        const r = 7 - ri;
+        std.debug.print(" {d} | ", .{r + 1});
+        for (0..8) |f| {
+            const sq = r * 8 + f;
+            const ch: u21 = if (colored_board.piece_type[sq]) |pt| Unicode[@intFromEnum(pt)] else ' ';
+            const bg: []const u8 = switch (colored_board.square_color[sq]) {
+                .dark => color_def.dark_square,
+                .light => color_def.light_square,
+            };
+            const fg: []const u8 = if (colored_board.piece_color[sq]) |pc| switch (pc) {
+                .black => color_def.black_piece,
+                .white => color_def.white_piece,
+            } else bg;
+
+            std.debug.print("{s}{s}{u} {s}", .{ fg, bg, ch, color_def.reset });
         }
         std.debug.print("\n", .{});
-        if (rank == 0) {
-            std.debug.print("    ----------------\n", .{});
-            std.debug.print("    a b c d f e g h\n", .{});
-            break;
-        }
     }
+    std.debug.print("    -----------------\n", .{});
+    std.debug.print("     a b c d e f g h\n", .{});
 }
