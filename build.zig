@@ -25,9 +25,9 @@ pub fn build(b: *std.Build) void {
         .target = target,
     });
 
-    // gui module
-    const mod_gui = b.addModule("gui", .{
-        .root_source_file = b.path("src/gui/+root.zig"),
+    // ui module
+    const mod_ui = b.addModule("ui", .{
+        .root_source_file = b.path("src/ui/+root.zig"),
         .target = target,
         .imports = &.{
             .{ .name = "engine", .module = mod_engine },
@@ -35,8 +35,8 @@ pub fn build(b: *std.Build) void {
             .{ .name = "raygui", .module = raygui },
         },
     });
-    const mod_gui_test = b.addModule("gui_test", .{
-        .root_source_file = b.path("src/gui/+test.zig"),
+    const mod_ui_test = b.addModule("ui_test", .{
+        .root_source_file = b.path("src/ui/+test.zig"),
         .target = target,
         .imports = &.{
             .{ .name = "engine", .module = mod_engine },
@@ -56,7 +56,7 @@ pub fn build(b: *std.Build) void {
                 .{ .name = "engine", .module = mod_engine },
                 .{ .name = "raylib", .module = raylib },
                 .{ .name = "raygui", .module = raygui },
-                .{ .name = "gui", .module = mod_gui },
+                .{ .name = "ui", .module = mod_ui },
             },
         }),
     });
@@ -83,11 +83,11 @@ pub fn build(b: *std.Build) void {
     });
     const run_test_engine = b.addRunArtifact(test_engine);
 
-    // gui module test
-    const test_gui = b.addTest(.{
-        .root_module = mod_gui_test,
+    // ui module test
+    const test_ui = b.addTest(.{
+        .root_module = mod_ui_test,
     });
-    const run_test_gui = b.addRunArtifact(test_gui);
+    const run_test_ui = b.addRunArtifact(test_ui);
 
     // main test
     const exe_tests = b.addTest(.{
@@ -99,5 +99,5 @@ pub fn build(b: *std.Build) void {
     const test_step = b.step("test", "Run tests");
     test_step.dependOn(&run_exe_tests.step);
     test_step.dependOn(&run_test_engine.step);
-    test_step.dependOn(&run_test_gui.step);
+    test_step.dependOn(&run_test_ui.step);
 }

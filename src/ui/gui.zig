@@ -1,6 +1,6 @@
 const rl = @import("raylib");
-const utilities = @import("engine").utilities;
 const chess = @import("engine").chess;
+const BoardView = @import("BoardView.zig").BoardView;
 const screenWidth = 800;
 const screenHeight = 500;
 const square_side_length: i32 = 50;
@@ -46,7 +46,7 @@ pub fn startGame() !void {
     }
 }
 fn drawChessboard(
-    view: utilities.BoardView,
+    view: BoardView,
     board_x: i32,
     board_y: i32,
     square_size: i32,

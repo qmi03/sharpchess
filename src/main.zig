@@ -1,11 +1,9 @@
-const std = @import("std");
 const chess = @import("engine").chess;
-const utilities = @import("engine").utilities;
-const rl = @import("raylib");
-const game = @import("gui").game;
+const gui = @import("ui").gui;
+const cli = @import("ui").cli;
 
 pub fn main() !void {
     const chessboard = chess.Chessboard.init();
-    try utilities.printBoard(chessboard);
-    try game.startGame();
+    try cli.printBoard(chessboard);
+    try gui.startGame();
 }
