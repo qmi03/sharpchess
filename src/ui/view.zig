@@ -49,7 +49,7 @@ pub const Color = struct {
         _ = std.fmt.bufPrintZ(&buf, "\x1b[48;2;{d};{d};{d}m", .{ r, g, b }) catch unreachable;
         return buf;
     }
-    fn hexToRaylibColor(hex: u32) rl.Color {
+    pub fn hexToRaylibColor(hex: u32) rl.Color {
         return .{
             .r = @intCast((hex >> 16) & 0xFF),
             .g = @intCast((hex >> 8) & 0xFF),
