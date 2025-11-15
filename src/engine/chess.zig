@@ -13,7 +13,6 @@ const RANK_7 = 6;
 const RANK_8 = 7;
 
 pub const PieceColor = enum { black, white };
-pub const PieceType = enum { pawn, knight, bishop, rook, queen, king };
 pub const PieceIndex = enum {
     black_all,
     white_all,

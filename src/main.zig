@@ -1,9 +1,8 @@
 const chess = @import("engine").chess;
-const gui = @import("ui").gui;
-const cli = @import("ui").cli;
+const ui = @import("ui");
 
 pub fn main() !void {
     const chessboard = chess.Chessboard.init();
-    try cli.printBoard(chessboard);
-    try gui.startGame();
+    try ui.cli.printBoard(chessboard);
+    // try ui.gui.startGame(chessboard);
 }
